@@ -64,14 +64,22 @@
         </v-navigation-drawer>
       </v-flex>
       <v-flex md10 lg10> 
-        <router-view ></router-view>
+        <router-view :flag=authenticated></router-view>
       </v-flex>
     </v-layout>
   </v-content>
 </template>
 <script>
 
+import axios from "axios";
+import {mapGetters} from "vuex";
+
 export default { 
+    mounted() {
+      if(!this.directoryShowKey) {
+        this.getUserData();
+      }
+    },
     data() {
         return {
             systemArray: [
@@ -97,8 +105,31 @@ export default {
                     text: 'Аспекты',
                     route: '/directory/aspects'
                 }
-            ]
+            ],   
+            user: {    
+                name: "Jude"   
+            }  
         };
+    },
+    computed: {
+      ...mapGetters ([
+        'directoryShowKey'
+      ]),
+      authenticated() {
+        return this.directoryShowKey;
+      }
+    },
+    methods: {
+      getUserData: function() { 
+        debugger;
+        let self = this    
+        axios.get("http://localhost:8081/api/user", { withCredentials: true })    
+          .then((response) => {      
+              this.$store.commit('toggleFlag', 'directoryShowKey');  
+          })    
+          .catch((errors) => {    
+          })    
+      } 
     }
 }
 </script>

@@ -7,22 +7,41 @@
                     <v-card-actions>
                         <v-layout column fill-height> 
                             <v-flex>
-                                <v-select :rules="[v => !!v || 'Поле обязательное к заполнению']" required :items="courses" @change="giveOtherParameters($event)" label="Название курса"></v-select>
+                                <v-select :items="courses"
+                                          v-model="dataAboutCourse.course"
+                                          @change="giveOtherParameters($event)"
+                                          label="Название курса"
+                                          v-validate="'required'"
+                                          :error-messages="errors.collect('name')"
+                                          data-vv-name="name"
+                                          ></v-select>
                             </v-flex>
                             <v-flex>
-                                <v-text-field disabled v-model="author" label="Автор"></v-text-field>
+                                <v-text-field disabled v-model="dataAboutCourse.author" label="Автор"></v-text-field>
                             </v-flex>
                             <v-flex>
-                                <v-text-field disabled v-model="numOfZE" label="Количество ЗЕ"></v-text-field>
+                                <v-text-field disabled v-model="dataAboutCourse.numOfZE" label="Количество ЗЕ"></v-text-field>
                             </v-flex>
                             <v-flex>
-                                <v-select :rules="[v => !!v || 'Поле обязательное к заполнению']" required :items="Expert" label="Эксперт 1"></v-select>
+                                <v-select :items="Expert"
+                                          v-model="dataAboutCourse.expertOne"
+                                          label="Эксперт 1"
+                                          v-validate="'required'"
+                                          :error-messages="errors.collect('expert')"
+                                          data-vv-name="expert"
+                                          ></v-select>
                             </v-flex>
                             <v-flex>
-                                <v-select :rules="[v => !!v || 'Поле обязательное к заполнению']" required :items="Expert" label="Эксперт 2"></v-select>
+                                <v-select :items="Expert"
+                                          v-model="dataAboutCourse.expertTwo"
+                                          label="Эксперт 2"
+                                          v-validate="'required'"
+                                          :error-messages="errors.collect('expert2')"
+                                          data-vv-name="expert2"
+                                          ></v-select>
                             </v-flex>
                             <v-flex lg8 md8>
-                                <v-btn color="light-green darken-1" block large outline round to="/expertise-result">Провести экспертизу</v-btn>
+                                <v-btn @click="submit" color="light-green darken-1" block large outline round>Провести экспертизу</v-btn>
                             </v-flex>
                         </v-layout>
                     </v-card-actions>
@@ -34,16 +53,22 @@
 </template>
 <script>
 import {mapGetters} from 'vuex';
+import { debug } from 'util';
 
 export default { 
     created() {
         this.$store.dispatch("getData", {type: 'ECourse', data: 'dataFromDB'});
         this.$store.dispatch("getData", {type: 'Teachers', data: 'teachersInfo'});
     },
+    mounted() {
+      this.$validator.localize('ru', this.dict);
+    },
     computed: {
         ...mapGetters ([
             'dataFromDB',
-            'teachersInfo'
+            'teachersInfo',
+            'dict',
+            'intermediateData'
         ]),
         courses() {
             let obj = this.dataFromDB;
@@ -67,23 +92,37 @@ export default {
     },
     data() {
         return {
-            author: '',
-            numOfZE: '',
+            dataAboutCourse: {
+                course: '',
+                expertOne: '',
+                expertTwo: '',
+                author: '',
+                numOfZE: '',
+            }
         }
     },
     methods: {
+        submit() {
+            this.$validator.validateAll().then(valid => {
+              if (valid) {
+                Object.assign(this.intermediateData, this.dataAboutCourse);
+                console.log(this.intermediateData);
+                this.$router.push('/expertise-result');
+              }
+            })
+        },
+
         giveOtherParameters(e) {
-            let bla = this.dataFromDB.filter(obj => {
+            let dataFilter = this.dataFromDB.filter(obj => {
                 return obj.CourseName === e;
             });
 
             this.teachersInfo.forEach((item, i, arr) => {
-                if(item.idTeacher === bla[0].Developer) {
-                    this.author = `${item.Surename} ${item.Name} ${item.Partonymic}`;
+                if(item.idTeacher === dataFilter[0].Developer) {
+                    this.dataAboutCourse.author = `${item.Surname} ${item.Name} ${item.Partonymic}`;
                 }
             });
-
-            this.numOfZE = bla[0].NumberOfZE;
+            this.dataAboutCourse.numOfZE = dataFilter[0].NumberOfZE;
         }
     }
 }

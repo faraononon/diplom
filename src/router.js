@@ -10,6 +10,7 @@ import Aspects from "./components/Aspects.vue";
 import Teachers from "./components/Teachers.vue";
 import Course from "./components/Course.vue";
 import Reports from "./views/Reports";
+import Login from "./views/Login";
 
 Vue.use(Router);
 
@@ -58,6 +59,11 @@ export default new Router({
       path: "/reports",
       name: "reports",
       component: Reports
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: Login
     }
   ]
 });

@@ -12,7 +12,7 @@
         <td>{{ props.item.Subcriterion }}</td>
         <td>{{ props.item.MaxVal }}</td>
         <td>{{ props.item.MinVal }}</td>
-        <td>
+        <td v-if="flag">
           <v-icon
             small
             class="mr-2"
@@ -29,7 +29,7 @@
         </td>
       </template>
     </v-data-table>
-    <v-toolbar flat color="white" class="elevation-1">
+    <v-toolbar flat color="white" class="elevation-1" v-if="flag">
       <v-dialog v-model="dialog" max-width="800px">
         <template v-slot:activator="{ on }">
           <v-btn color="green darken-1" large dark class="mb-2" v-on="on">Новая запись</v-btn>
@@ -41,6 +41,13 @@
 
           <v-card-text>
             <v-container grid-list-md>
+              <v-select v-model="form.Subcriterion" 
+                            :items="subcriterion"
+                            label="Субкритерий"
+                            v-validate="'required'"
+                            :error-messages="errors.collect('criterionSelect')"
+                            data-vv-name="criterionSelect"
+                            ></v-select>
               <v-text-field v-model="form.idAspect" 
                             label="Идентификатор"
                             v-validate="'required|max:5'"
@@ -53,13 +60,6 @@
                             :error-messages="errors.collect('name')"
                             data-vv-name="name"
                             ></v-text-field>
-            <v-select v-model="form.Subcriterion" 
-                            :items="subcriterion"
-                            label="Субкритерий"
-                            v-validate="'required'"
-                            :error-messages="errors.collect('criterionSelect')"
-                            data-vv-name="criterionSelect"
-                            ></v-select>
               <v-text-field v-model="form.MaxVal" 
                             label="Максимальная оценка"
                             v-validate="'required|decimal:1|max:4'"
@@ -110,6 +110,7 @@ export default {
     mounted() {
       this.$validator.localize('ru', this.dict);
     },
+    props: ['flag'],
     data() {
         return {
             editedIndex: -1,

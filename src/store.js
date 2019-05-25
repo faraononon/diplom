@@ -7,6 +7,7 @@ export default new Vuex.Store({
   state: {
     dataFromDB: [],
     rowData: {},
+    intermediateData: {},
     teachersInfo: [],
     criterionInfo: [],
     subCriterionInfo: [],
@@ -14,6 +15,8 @@ export default new Vuex.Store({
     departmentInfo: [],
     positionInfo: [],
     directionInfo: [],
+    flagForAuth: false,
+    directoryShowKey: false,
     dict: {
       custom: {
         id: {
@@ -50,6 +53,9 @@ export default new Vuex.Store({
           max: "Введено слишком много символов"
         },
         expert: {
+          required: "Заполните поле"
+        },
+        expert2: {
           required: "Заполните поле"
         },
         criterionSelect: {
@@ -117,6 +123,17 @@ export default new Vuex.Store({
     }
   },
   getters: {
+    directoryShowKey(state) {
+      return state.directoryShowKey;
+    },
+    flagForAuth(state) {
+      debugger;
+      if (Vue.cookies.get("mysession")) {
+        return (state.flagForAuth = true);
+      } else {
+        return (state.flagForAuth = false);
+      }
+    },
     dataFromDB(state) {
       return state.dataFromDB;
     },
@@ -146,6 +163,9 @@ export default new Vuex.Store({
     },
     directionInfo(state) {
       return state.directionInfo;
+    },
+    intermediateData(state) {
+      return state.intermediateData;
     }
   },
   mutations: {
@@ -170,6 +190,9 @@ export default new Vuex.Store({
       for (let prop in state.rowData) {
         delete state.rowData[prop];
       }
+    },
+    toggleFlag(state, flag) {
+      state[flag] = !state[flag];
     }
   },
   actions: {

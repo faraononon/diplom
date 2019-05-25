@@ -21,7 +21,7 @@
         <td>{{ props.item.DischargeDate }}</td>
         <td>{{ props.item.NumberOfExtractAcadCouncil }}</td>
         <td>{{ props.item.DischargeDateCouncil }}</td>
-        <td>
+        <td v-if="flag">
           <v-icon
             small
             class="mr-2"
@@ -38,7 +38,7 @@
         </td>
       </template>
     </v-data-table>
-    <v-toolbar flat color="white" class="elevation-1">
+    <v-toolbar flat color="white" class="elevation-1" v-if="flag">
       <v-dialog v-model="dialog" max-width="800px">
         <template v-slot:activator="{ on }">
           <v-btn color="green darken-1" large dark class="mb-2" v-on="on">Новая запись</v-btn>
@@ -179,6 +179,7 @@ export default {
     mounted() {
       this.$validator.localize('ru', this.dict);
     },
+    props: ['flag'],
     data() {
         return {
             editedIndex: -1,
