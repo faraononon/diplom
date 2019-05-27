@@ -6,6 +6,7 @@ import Expertise from "./views/Expertise.vue";
 import ExpertiseResult from "./views/ExpertiseResult.vue";
 import Criteria from "./components/Criteria.vue";
 import SubCriteria from "./components/SubCriteria.vue";
+import TranscriptAspect from "./components/TranscriptAspect.vue";
 import Aspects from "./components/Aspects.vue";
 import Teachers from "./components/Teachers.vue";
 import Course from "./components/Course.vue";
@@ -40,6 +41,7 @@ export default new Router({
       children: [{ path: "", component: Course },
                  { path: "course", component: Course },
                  { path: "teachers", component: Teachers },
+                 { path: "transcriptaspect", component: TranscriptAspect },
                  { path: "aspects", component: Aspects },
                  { path: "subcriteria", component: SubCriteria },
                  { path: "criteria", component: Criteria }

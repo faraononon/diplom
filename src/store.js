@@ -11,6 +11,7 @@ export default new Vuex.Store({
     teachersInfo: [],
     criterionInfo: [],
     subCriterionInfo: [],
+    aspectsInfo: [],
     instituteInfo: [],
     departmentInfo: [],
     positionInfo: [],
@@ -148,6 +149,9 @@ export default new Vuex.Store({
     },
     subCriterionInfo(state) {
       return state.subCriterionInfo;
+    },
+    aspectsInfo(state) {
+      return state.aspectsInfo;
     },
     instituteInfo(state) {
       return state.instituteInfo;

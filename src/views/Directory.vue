@@ -104,6 +104,10 @@ export default {
                 {
                     text: 'Аспекты',
                     route: '/directory/aspects'
+                },
+                {
+                    text: 'Расшифровки аспектов',
+                    route: '/directory/transcriptaspect'
                 }
             ],   
             user: {    

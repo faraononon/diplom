@@ -48,7 +48,25 @@
                 </v-card>
             </v-flex>
         </v-layout>
-        
+        <v-dialog v-model="dialog" max-width="400px">
+            <v-card>
+                <v-card-title class="d-block text-lg-center">
+                    <span class="headline">Внимание!</span>
+                </v-card-title>
+                <v-card-text class="subheading d-block text-lg-center">Эксперты должны быть разные.</v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                    color="green darken-1"
+                    flat="flat"
+                    large
+                    @click="close"
+                >
+                    Закрыть
+                </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-content>
 </template>
 <script>
@@ -98,17 +116,26 @@ export default {
                 expertTwo: '',
                 author: '',
                 numOfZE: '',
-            }
+            },
+            dialog: false,
         }
     },
     methods: {
+        close: function() {
+            this.dialog = false;
+        },
         submit() {
+            debugger;
             this.$validator.validateAll().then(valid => {
-              if (valid) {
-                Object.assign(this.intermediateData, this.dataAboutCourse);
-                console.log(this.intermediateData);
-                this.$router.push('/expertise-result');
-              }
+                if (valid) {
+                    if(this.dataAboutCourse.expertOne !== this.dataAboutCourse.expertTwo) {
+                        Object.assign(this.intermediateData, this.dataAboutCourse);
+                        console.log(this.intermediateData);
+                        this.$router.push('/expertise-result');
+                    } else {
+                        this.dialog = true;
+                    }
+                }
             })
         },
 

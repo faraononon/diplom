@@ -70,8 +70,7 @@
                 this.$store.commit('toggleFlag', 'flagForAuth');
                 this.$router.push("/");   
             })    
-            .catch((errors) => {    
-                // alert("Данного пользователя не существует. Проверьте корректность данных");  
+            .catch((errors) => { 
                 this.dialog = true;  
             });    
         }       
