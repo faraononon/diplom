@@ -50,7 +50,7 @@
                             ></v-select>
               <v-text-field v-model="form.idTA" 
                             label="Идентификатор"
-                            v-validate="'required|max:5'"
+                            v-validate="'required|max:7'"
                             :error-messages="errors.collect('id')"
                             data-vv-name="id"
                             ></v-text-field>

@@ -8,7 +8,7 @@
                         <v-layout column fill-height> 
                             <v-flex>
                                 <v-select :items="courses"
-                                          v-model="dataAboutCourse.course"
+                                          v-model="dataAboutCourse.CourseName"
                                           @change="giveOtherParameters($event)"
                                           label="Название курса"
                                           v-validate="'required'"
@@ -17,10 +17,10 @@
                                           ></v-select>
                             </v-flex>
                             <v-flex>
-                                <v-text-field disabled v-model="dataAboutCourse.author" label="Автор"></v-text-field>
+                                <v-text-field disabled v-model="dataAboutCourse.Teacher" label="Автор"></v-text-field>
                             </v-flex>
                             <v-flex>
-                                <v-text-field disabled v-model="dataAboutCourse.numOfZE" label="Количество ЗЕ"></v-text-field>
+                                <v-text-field disabled v-model="dataAboutCourse.NumberOfZE" label="Количество ЗЕ"></v-text-field>
                             </v-flex>
                             <v-flex>
                                 <v-select :items="Expert"
@@ -111,11 +111,11 @@ export default {
     data() {
         return {
             dataAboutCourse: {
-                course: '',
+                CourseName: '',
                 expertOne: '',
                 expertTwo: '',
-                author: '',
-                numOfZE: '',
+                Teacher: '',
+                NumberOfZE: '',
             },
             dialog: false,
         }
@@ -129,6 +129,18 @@ export default {
             this.$validator.validateAll().then(valid => {
                 if (valid) {
                     if(this.dataAboutCourse.expertOne !== this.dataAboutCourse.expertTwo) {
+                        this.teachersInfo.forEach((item, i, arr) => {
+                            if(!Number(this.dataAboutCourse.Teacher) && this.dataAboutCourse.Teacher.indexOf(item.Surname) !== -1) {
+                                this.dataAboutCourse.Teacher = item.idTeacher;
+                            }
+                        });
+                        this.teachersInfo.forEach((item, i, arr) => {
+                            if(!Number(this.dataAboutCourse.expertOne) && this.dataAboutCourse.expertOne.indexOf(item.Surname) !== -1) {
+                                this.dataAboutCourse.expertOne = item.idTeacher;
+                            } else if(!Number(this.dataAboutCourse.expertTwo) && this.dataAboutCourse.expertTwo.indexOf(item.Surname) !== -1) {
+                                this.dataAboutCourse.expertTwo = item.idTeacher;
+                            }
+                        });
                         Object.assign(this.intermediateData, this.dataAboutCourse);
                         console.log(this.intermediateData);
                         this.$router.push('/expertise-result');
@@ -146,10 +158,10 @@ export default {
 
             this.teachersInfo.forEach((item, i, arr) => {
                 if(item.idTeacher === dataFilter[0].Developer) {
-                    this.dataAboutCourse.author = `${item.Surname} ${item.Name} ${item.Partonymic}`;
+                    this.dataAboutCourse.Teacher = `${item.Surname} ${item.Name} ${item.Partonymic}`;
                 }
             });
-            this.dataAboutCourse.numOfZE = dataFilter[0].NumberOfZE;
+            this.dataAboutCourse.NumberOfZE = dataFilter[0].NumberOfZE;
         }
     }
 }

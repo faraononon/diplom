@@ -212,6 +212,7 @@ export default new Vuex.Store({
         });
     },
     createNewRow(rowData, type) {
+      debugger;
       Vue.http
         .post(
           `http://db.flexio.beget.tech/api/${type}`,

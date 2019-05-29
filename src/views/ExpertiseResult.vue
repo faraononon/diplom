@@ -17,15 +17,15 @@
                 <td>{{ props.item.maxVal }}</td>
                 <td>{{ props.item.minVal }}</td>
                 <td>
-                    <v-text-field style="width: 50px" v-model=props.item.expert1></v-text-field>
+                    <v-text-field style="width: 50px" @change="addRating($event, props.item)" v-model=props.item.expert1></v-text-field>
                 </td>
                 <td>
-                    <v-text-field style="width: 50px" v-model=props.item.expert2></v-text-field>
+                    <v-text-field style="width: 50px" @change="addRating($event, props.item)" v-model=props.item.expert2></v-text-field>
                 </td>
             </template>
             </v-data-table>
             <div class="text-xs-center pt-2">
-            <v-pagination v-model="pagination.page" :length="20"></v-pagination>
+            <v-pagination v-model="pagination.page" :length="35"></v-pagination>
             </div>
             <v-btn color="light-green darken-2" outline absolute large right>Завершить экспертизу</v-btn>
         </div>
@@ -97,21 +97,49 @@ export default {
         'dataFromDB',
         'aspectsInfo',
         'criterionInfo',
-        'subCriterionInfo'
+        'subCriterionInfo',
+        'intermediateData',
+        'rowData'
       ]),
+      list() {
+        return this.generateList();
+      },
       pages () {
-        if (this.pagination.rowsPerPage == null ||
+          if (this.pagination.rowsPerPage == null ||
           this.pagination.totalItems == null
         ) return 0
 
         return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
       },
-      list() {
-        debugger;
-        return this.generateList();
-      },
     },
     methods: {
+      addRating(e, string) {
+        debugger;
+        if(Number(e) <= string.maxVal && Number(e) >= string.minVal) {
+          if(string.expert1 !== undefined && string.expert2 !== undefined) {
+            this.intermediateData.Value = +(string.expert1) + +(string.expert2);
+          } else {
+            this.intermediateData.Value = e;
+          }
+          switch(true) {
+            case (string.criterion !== undefined):
+              this.intermediateData.Criterion = string.criterion.substring(0, string.criterion.indexOf(" "));
+              break;
+            case (string.subcriterion !== undefined):
+              this.intermediateData.Subcriterion = string.subcriterion.substring(0, string.subcriterion.indexOf(" "));
+              break;
+            case (string.aspect !== undefined):
+              this.intermediateData.Aspect = string.aspect.substring(0, string.aspect.indexOf(" "));
+              break;
+            case (string.transcriptAspect !== undefined):
+              this.intermediateData.TA = string.transcriptAspect.substring(0, string.criterion.indexOf(" "));
+          }
+          Object.assign(this.rowData, this.intermediateData);
+          this.$store.dispatch('createNewRow', 'CourseExamination');
+        } else {
+          alert("Введите корректное число!");
+        }
+      },
       generateList() {
         if(this.criterionInfo.length > 0 && 
            this.subCriterionInfo.length > 0 &&
@@ -139,7 +167,7 @@ export default {
                       //расшифровка
                       for(let i = transcriptStep === undefined ? 0 : transcriptStep; i < this.dataFromDB.length; i++) {
                         let transcriptAspect = this.dataFromDB[i];
-                        if(transcriptAspect.idTA.slice(0, 4) === aspect.idAspect.slice(0, 4)) {
+                        if(transcriptAspect.idTA && transcriptAspect.idTA.slice(0, 4) === aspect.idAspect.slice(0, 4)) {
                           let obj = this.addToArray({transcriptAspect, prop: 'transcriptAspect', id: 'idTA', name: 'TAName'});
                           array.push(obj);
                         } else {
