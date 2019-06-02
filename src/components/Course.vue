@@ -310,6 +310,7 @@ export default {
                 transformedArray.push(pastArray.reverse().join("-"));
               });
               [this.form.DischargeDate, this.form.DischargeDateCouncil] = transformedArray;
+              debugger;
               Object.assign(this.rowData, this.form);
               if (this.editedIndex > -1) {
                 this.$store.dispatch('updateRow', {name: 'ECourse', val: this.rowData.CourseName});

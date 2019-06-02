@@ -62,8 +62,7 @@
         this.dialog = false;
       },
       login: function() {
-        debugger;
-        axios.post("http://localhost:8081/api/login", this.formData, { withCredentials: true })    
+        axios.post("http://localhost:8081/login", this.formData, { withCredentials: true })    
             .then((response) => {
                 let name = response.data.Name;
                 this.$cookies.set('name', response.data.Name, 60 * 60 * 24 * 1000);

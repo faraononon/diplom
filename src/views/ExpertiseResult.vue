@@ -27,7 +27,7 @@
             <div class="text-xs-center pt-2">
             <v-pagination v-model="pagination.page" :length="35"></v-pagination>
             </div>
-            <v-btn color="light-green darken-2" outline absolute large right>Завершить экспертизу</v-btn>
+            <v-btn color="light-green darken-2" @click="printFile" outline absolute large right>Завершить экспертизу</v-btn>
         </div>
         </template>
     </v-content>
@@ -42,6 +42,7 @@ export default {
       this.$store.dispatch("getData", {type: 'Aspects', data: 'aspectsInfo'});
       this.$store.dispatch("getData", {type: 'Criteria', data: 'criterionInfo'});
       this.$store.dispatch("getData", {type: 'Subcriteria', data: 'subCriterionInfo'});
+      this.$store.dispatch("getData", {type: 'CourseExamination', data: 'courseExaminationInfo'});
     },
     data () {
       return {
@@ -99,6 +100,7 @@ export default {
         'criterionInfo',
         'subCriterionInfo',
         'intermediateData',
+        'courseExaminationInfo',
         'rowData'
       ]),
       list() {
@@ -113,29 +115,58 @@ export default {
       },
     },
     methods: {
-      addRating(e, string) {
+      printFile() {
         debugger;
+        this.$store.dispatch('getFile', {prop: this.intermediateData.CourseName});
+      },
+      cleanIntermediateData() {
+        delete this.intermediateData.Criterion;
+        delete this.intermediateData.Subcriterion;
+        delete this.intermediateData.Aspect;
+        delete this.intermediateData.TA;
+      },
+      addRating(e, string) {
         if(Number(e) <= string.maxVal && Number(e) >= string.minVal) {
-          if(string.expert1 !== undefined && string.expert2 !== undefined) {
-            this.intermediateData.Value = +(string.expert1) + +(string.expert2);
-          } else {
-            this.intermediateData.Value = e;
-          }
+          let propName = '';
+          let firstProp = {};
           switch(true) {
             case (string.criterion !== undefined):
-              this.intermediateData.Criterion = string.criterion.substring(0, string.criterion.indexOf(" "));
+              firstProp.Criterion = string.criterion.substring(0, string.criterion.indexOf(" "));
+              propName = "Criterion";
               break;
             case (string.subcriterion !== undefined):
-              this.intermediateData.Subcriterion = string.subcriterion.substring(0, string.subcriterion.indexOf(" "));
+              firstProp.Subcriterion = string.subcriterion.substring(0, string.subcriterion.indexOf(" "));
+              propName = "Subcriterion";
               break;
             case (string.aspect !== undefined):
-              this.intermediateData.Aspect = string.aspect.substring(0, string.aspect.indexOf(" "));
+              firstProp.Aspect = string.aspect.substring(0, string.aspect.indexOf(" "));
+              propName = "Aspect";
               break;
             case (string.transcriptAspect !== undefined):
-              this.intermediateData.TA = string.transcriptAspect.substring(0, string.criterion.indexOf(" "));
+              firstProp.TA = string.transcriptAspect.substring(0, string.transcriptAspect.indexOf(" "));
+              propName = "TA";
           }
-          Object.assign(this.rowData, this.intermediateData);
-          this.$store.dispatch('createNewRow', 'CourseExamination');
+          if(string.expert1 !== undefined && string.expert2 !== undefined) {
+            this.intermediateData.Value = +(string.expert1) + +(string.expert2);
+            Object.assign(firstProp, this.intermediateData);
+            Object.assign(this.rowData, firstProp);
+            this.$store.dispatch('updateRow', {name: 'CourseExamination', val: this.rowData[propName]});
+            this.cleanIntermediateData();
+          } else {
+            this.intermediateData.Value = e;
+            Object.assign(firstProp, this.intermediateData);
+            Object.assign(this.rowData, firstProp);
+            let updateKey = this.courseExaminationInfo.find((item) => {
+              return item[propName] === this.rowData[propName];
+            });
+            if(updateKey) {
+              this.$store.dispatch('updateRow', {name: 'CourseExamination', val: this.rowData[propName]});
+              this.cleanIntermediateData();
+            } else {
+              this.$store.dispatch('createNewRow', 'CourseExamination');
+              this.cleanIntermediateData();
+            }
+          }
         } else {
           alert("Введите корректное число!");
         }

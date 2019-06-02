@@ -40,6 +40,23 @@
                                           data-vv-name="expert2"
                                           ></v-select>
                             </v-flex>
+                            <v-flex>
+                                <v-text-field v-model="dataAboutCourse.protocolNum" 
+                                                label="Номер протокола экспертной оценки"
+                                                v-validate="'required'"
+                                                :error-messages="errors.collect('discipline')"
+                                                data-vv-name="discipline"></v-text-field>
+                            </v-flex>
+                            <v-flex>
+                                <v-text-field v-model="dataAboutCourse.protocolDate" 
+                                                label="Дата протокола"
+                                                mask="##.##.####"
+                                                return-masked-value
+                                                v-validate="'required'"
+                                                :error-messages="errors.collect('dischargeDate')"
+                                                data-vv-name="dischargeDate"
+                                                ></v-text-field>
+                            </v-flex>
                             <v-flex lg8 md8>
                                 <v-btn @click="submit" color="light-green darken-1" block large outline round>Провести экспертизу</v-btn>
                             </v-flex>
@@ -84,6 +101,7 @@ export default {
     computed: {
         ...mapGetters ([
             'dataFromDB',
+            'rowData',
             'teachersInfo',
             'dict',
             'intermediateData'
@@ -116,6 +134,8 @@ export default {
                 expertTwo: '',
                 Teacher: '',
                 NumberOfZE: '',
+                protocolNum: '',
+                protocolDate: ''
             },
             dialog: false,
         }
@@ -125,7 +145,6 @@ export default {
             this.dialog = false;
         },
         submit() {
-            debugger;
             this.$validator.validateAll().then(valid => {
                 if (valid) {
                     if(this.dataAboutCourse.expertOne !== this.dataAboutCourse.expertTwo) {
@@ -142,7 +161,18 @@ export default {
                             }
                         });
                         Object.assign(this.intermediateData, this.dataAboutCourse);
+                        let objectForExpertOpinion = {
+                            NumProtocol: this.dataAboutCourse.protocolNum,
+                            DateProtocol: this.dataAboutCourse.protocolDate,
+                            CourseName: this.dataAboutCourse.CourseName
+                        }
+                        debugger;
+                        let pastArray = objectForExpertOpinion.DateProtocol.split(".");
+                        objectForExpertOpinion.DateProtocol = pastArray.reverse().join("-");
+                        console.log(objectForExpertOpinion);
                         console.log(this.intermediateData);
+                        Object.assign(this.rowData, objectForExpertOpinion);
+                        this.$store.dispatch('createNewRow', 'ExpertOpinion');
                         this.$router.push('/expertise-result');
                     } else {
                         this.dialog = true;

@@ -26,7 +26,7 @@
         array: [
           {
             title: 'Справочники',
-            text: 'Редактировать справочники',
+            text: 'Справочники',
             icon: 'assignment',
             route: '/directory'
           },
@@ -50,6 +50,7 @@
         'flagForAuth'
     ]),
       nameCookie() {
+        debugger;
         if(this.flagForAuth) {
           return this.$cookies.get('name');
         }

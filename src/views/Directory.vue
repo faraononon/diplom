@@ -124,10 +124,9 @@ export default {
       }
     },
     methods: {
-      getUserData: function() { 
-        debugger;
+      getUserData: function() {
         let self = this    
-        axios.get("http://localhost:8081/api/user", { withCredentials: true })    
+        axios.get("http://localhost:8081/user", { withCredentials: true })    
           .then((response) => {      
               this.$store.commit('toggleFlag', 'directoryShowKey');  
           })    

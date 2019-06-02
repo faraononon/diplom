@@ -26,13 +26,12 @@ export default {
             'flagForAuth',
         ]),
     nameCookie() {
-      debugger;
       return this.flagForAuth;
     }
   },
   methods: {
       logout: function() { 
-        axios.get("http://localhost:8081/api/logout", { withCredentials: true })    
+        axios.get("http://localhost:8081/logout", { withCredentials: true })    
           .then((response) => {
               this.$store.commit('toggleFlag', 'flagForAuth');
               this.$store.commit('toggleFlag', 'directoryShowKey');  
